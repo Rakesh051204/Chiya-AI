@@ -3,6 +3,25 @@ import sqlite3
 import pandas as pd
 from datetime import date
 
+# DATABASE
+conn = sqlite3.connect("food.db", check_same_thread=False)
+c = conn.cursor()
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS food (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    quantity INTEGER,
+    expiry TEXT
+)
+""")
+
+conn.commit()
+import streamlit as st
+import sqlite3
+import pandas as pd
+from datetime import date
+
 st.set_page_config(page_title="Chiya AI SaaS", layout="wide")
 st.title("🌱 Chiya AI SaaS Platform (Phase 4)")
 st.subheader("Startup-Ready Smart Food Intelligence System")
