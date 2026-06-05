@@ -1,43 +1,24 @@
 import streamlit as st
-import sqlite3
-import pandas as pd
-from datetime import date
 
-# -------------------------
-# CONFIG
-# -------------------------
-st.set_page_config(page_title="Chiya AI SaaS", layout="wide")
+st.set_page_config(page_title="Chiya AI")
 
-# -------------------------
-# DATABASE
-# -------------------------
-conn = sqlite3.connect("food.db", check_same_thread=False)
-c = conn.cursor()
+st.title("🌱 Chiya AI SaaS Platform")
+st.subheader("Startup-Ready Smart Food Intelligence System")
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS food (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    quantity INTEGER,
-    expiry TEXT
-)
-""")
+food = st.text_input("Food Name")
+qty = st.number_input("Quantity", min_value=1, value=1)
 
-conn.commit()
+if st.button("Add Food"):
+    st.success(f"{food} added successfully!")
 
-# -------------------------
-# FUNCTIONS
-# -------------------------
-def add_food(name, qty, expiry):
-    c.execute(
-        "INSERT INTO food (name, quantity, expiry) VALUES (?, ?, ?)",
-        (name, qty, str(expiry))
-    )
-    conn.commit()
+st.header("📊 Dashboard")
 
-def delete_food(food_id):
-    c.execute("DELETE FROM food WHERE id=?", (food_id,))
-    conn.commit()
+st.metric("Total Items", 0)
+st.metric("Expired", 0)
+st.metric("High Risk", 0)
 
-def load_food():
-    return pd.read_sql_query("SELECT * FROM food", conn)
+st.header("🤖 AI Recommendation")
+st.info("Supabase integration coming next.")
+
+st.header("📦 Inventory")
+st.write("No food items yet.")
