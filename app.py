@@ -6,17 +6,16 @@ from supabase import create_client
 # =========================
 # SUPABASE CONFIG
 # =========================
-SUPABASE_URL = "YOUR_SUPABASE_URL"
-SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY"
+
+SUPABASE_URL = "https://grgefavcsqpmdicuvfvy.supabase.co"
+SUPABASE_KEY = "sb_publishable_XWDVocxI3J1wrdAHKLKsEA_6bYZv-gV"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-# =========================
-# SUPABASE CONFIG
-# =========================
 
 # =========================
 # PAGE CONFIG
 # =========================
+
 st.set_page_config(
     page_title="Chiya AI",
     page_icon="🌱",
@@ -26,12 +25,14 @@ st.set_page_config(
 # =========================
 # HEADER
 # =========================
+
 st.title("🌱 Chiya AI SaaS Platform")
 st.subheader("Startup-Ready Smart Food Intelligence System")
 
 # =========================
-# ADD FOOD FORM
+# ADD FOOD
 # =========================
+
 st.header("➕ Add Food")
 
 food = st.text_input("Food Name")
@@ -44,33 +45,54 @@ qty = st.number_input(
 
 expiry_date = st.date_input(
     "Expiry Date",
-    min_value=date.today()
+    value=date.today()
 )
 
 if st.button("Add Food"):
+
     if food.strip() == "":
         st.warning("Please enter food name")
+
     else:
-        supabase.table("food_items").insert({
-            "food_name": food,
-            "quantity": int(qty),
-            "expiry_date": str(expiry_date)
-        }).execute()
 
-        st.success(f"✅ {food} added successfully!")
+        try:
+
+            supabase.table("food_items").insert({
+                "food_name": food,
+                "quantity": int(qty),
+                "expiry_date": str(expiry_date)
+            }).execute()
+
+            st.success(f"✅ {food} added successfully!")
+
+        except Exception as e:
+            st.error(f"Error: {e}")
 
 # =========================
-# FETCH DATA
+# LOAD DATA
 # =========================
+
+foods = []
+
 try:
-    response = supabase.table("food_items").select("*").execute()
+
+    response = (
+        supabase
+        .table("food_items")
+        .select("*")
+        .execute()
+    )
+
     foods = response.data
-except:
-    foods = []
+
+except Exception as e:
+
+    st.error(f"Database Error: {e}")
 
 # =========================
-# DASHBOARD CALCULATIONS
+# DASHBOARD
 # =========================
+
 today = date.today()
 
 total_items = len(foods)
@@ -78,7 +100,10 @@ expired = 0
 high_risk = 0
 
 for item in foods:
-    exp_date = pd.to_datetime(item["expiry_date"]).date()
+
+    exp_date = pd.to_datetime(
+        item["expiry_date"]
+    ).date()
 
     if exp_date < today:
         expired += 1
@@ -88,52 +113,66 @@ for item in foods:
     if 0 <= days_left <= 3:
         high_risk += 1
 
-# =========================
-# DASHBOARD
-# =========================
 st.header("📊 Dashboard")
 
-col1, col2, col3 = st.columns(3)
+c1, c2, c3 = st.columns(3)
 
-col1.metric("Total Items", total_items)
-col2.metric("Expired", expired)
-col3.metric("High Risk", high_risk)
+c1.metric("Total Items", total_items)
+c2.metric("Expired", expired)
+c3.metric("High Risk", high_risk)
 
 # =========================
 # AI RECOMMENDATION
 # =========================
+
 st.header("🤖 AI Recommendation")
 
-recommendations = []
+alerts = []
 
 for item in foods:
-    exp_date = pd.to_datetime(item["expiry_date"]).date()
+
+    exp_date = pd.to_datetime(
+        item["expiry_date"]
+    ).date()
+
     days_left = (exp_date - today).days
 
     if 0 <= days_left <= 3:
-        recommendations.append(
+
+        alerts.append(
             f"⚠️ Use {item['food_name']} soon ({days_left} day(s) left)"
         )
 
-if recommendations:
-    for rec in recommendations:
-        st.info(rec)
+if alerts:
+
+    for alert in alerts:
+        st.warning(alert)
+
 else:
-    st.success("🎉 No foods are at risk of expiring.")
+
+    st.success(
+        "🎉 No foods are close to expiry."
+    )
 
 # =========================
 # INVENTORY
 # =========================
+
 st.header("📦 Inventory")
 
-if foods:
+if len(foods) > 0:
 
-    inventory_data = []
+    rows = []
 
     for item in foods:
 
-        exp_date = pd.to_datetime(item["expiry_date"]).date()
-        days_left = (exp_date - today).days
+        exp_date = pd.to_datetime(
+            item["expiry_date"]
+        ).date()
+
+        days_left = (
+            exp_date - today
+        ).days
 
         if days_left < 0:
             status = "Expired"
@@ -142,7 +181,7 @@ if foods:
         else:
             status = "Fresh"
 
-        inventory_data.append({
+        rows.append({
             "Food": item["food_name"],
             "Quantity": item["quantity"],
             "Expiry Date": item["expiry_date"],
@@ -150,7 +189,7 @@ if foods:
             "Status": status
         })
 
-    df = pd.DataFrame(inventory_data)
+    df = pd.DataFrame(rows)
 
     st.dataframe(
         df,
@@ -158,4 +197,5 @@ if foods:
     )
 
 else:
-    st.write("No food items yet.")
+
+    st.info("No food items yet.")
