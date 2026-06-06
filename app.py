@@ -15,7 +15,8 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 # =========================
 SUPABASE_URL = "https://abcdefghijk.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-
+SUPABASE_URL = "https://abcd1234.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIs..."
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 # =========================
 # PAGE CONFIG
