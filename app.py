@@ -13,9 +13,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 # =========================
 # SUPABASE CONFIG
 # =========================
-SUPABASE_aon=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZ2VmYXZjc3FwbWRpY3V2ZnZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NjcyOTAsImV4cCI6MjA5NjI0MzI5MH0.l2NDm-rNs7zrCgNTzz8aih4x5X-FH3KWeskbxnAEGgQ
-SUPABASE_Key = "sb_secret_ZmKRWtpjwn8KNZvm7wAVBg_q6TO4Qur
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 # =========================
 # PAGE CONFIG
 # =========================
